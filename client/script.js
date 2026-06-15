@@ -211,7 +211,108 @@ document.addEventListener('DOMContentLoaded', function() {
   }
   
   window.addEventListener('scroll', updateActiveLink);
+  // ========================================
+// DARK/LIGHT MODE THEME TOGGLE
+// (React ThemeProvider ekvivalent u čistom JS)
+// ========================================
+
+// Funkcija koja inicijalizuje temu
+function initTheme() {
+  const switchable = true; // Da li korisnik može da menja temu
   
+  // Proveri da li je tema sačuvana u localStorage
+  let theme = 'light';
+  
+  if (switchable) {
+    const stored = localStorage.getItem('theme');
+    if (stored === 'dark' || stored === 'light') {
+      theme = stored;
+    } else {
+      // Proveri sistemske preferencije (ako korisnik nema sačuvanu temu)
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      theme = prefersDark ? 'dark' : 'light';
+    }
+  }
+  
+  // Primeni temu na <html> element
+  applyTheme(theme, switchable);
+  
+  // Sačuvaj u localStorage ako je switchable
+  if (switchable) {
+    localStorage.setItem('theme', theme);
+  }
+  
+  return theme;
+}
+
+// Funkcija koja primenjuje temu na stranicu
+function applyTheme(theme, saveToStorage = true) {
+  const root = document.documentElement;
+  
+  if (theme === 'dark') {
+    root.classList.add('dark');
+  } else {
+    root.classList.remove('dark');
+  }
+  
+  if (saveToStorage) {
+    localStorage.setItem('theme', theme);
+  }
+  
+  // Ažuriraj dugme ako postoji (sakrij/neprikazuj ikonice)
+  updateThemeButtonIcons(theme);
+}
+
+// Funkcija koja menja temu (toggle)
+function toggleTheme() {
+  const root = document.documentElement;
+  const isDark = root.classList.contains('dark');
+  const newTheme = isDark ? 'light' : 'dark';
+  
+  applyTheme(newTheme, true);
+  
+  // Opciono: emituj custom event ako drugi delovi koda treba da znaju
+  window.dispatchEvent(new CustomEvent('themeChanged', { detail: { theme: newTheme } }));
+}
+
+// Ažurira ikonice na dugmetu
+function updateThemeButtonIcons(theme) {
+  const themeToggle = document.getElementById('themeToggle');
+  if (!themeToggle) return;
+  
+  const sunIcon = themeToggle.querySelector('.fa-sun');
+  const moonIcon = themeToggle.querySelector('.fa-moon');
+  
+  if (theme === 'dark') {
+    if (sunIcon) sunIcon.style.display = 'none';
+    if (moonIcon) moonIcon.style.display = 'inline-block';
+  } else {
+    if (sunIcon) sunIcon.style.display = 'inline-block';
+    if (moonIcon) moonIcon.style.display = 'none';
+  }
+}
+
+// Inicijalizuj temu i dodaj event listener na dugme
+document.addEventListener('DOMContentLoaded', function() {
+  // Inicijalizuj temu
+  initTheme();
+  
+  // Dodaj event listener na dugme
+  const themeToggleBtn = document.getElementById('themeToggle');
+  if (themeToggleBtn) {
+    themeToggleBtn.addEventListener('click', toggleTheme);
+  }
+  
+  // Opciono: prati sistemske promene teme (ako korisnik nema sačuvanu)
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
+    // Samo ako nema sačuvane preferencije
+    if (!localStorage.getItem('theme')) {
+      const newTheme = e.matches ? 'dark' : 'light';
+      applyTheme(newTheme, false);
+    }
+  });
+});
+
   // ========== BUTTON CLICK HANDLERS (demo) ==========
   const demoButtons = document.querySelectorAll('.btn-primary, .btn-secondary');
   demoButtons.forEach(btn => {

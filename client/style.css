@@ -727,3 +727,123 @@ h1, h2, h3, h4, h5, h6 {
     font-size: 1.75rem;
   }
 }
+/* ========================================
+   DARK/LIGHT MODE TOGGLE BUTTON
+   ======================================== */
+
+.theme-toggle-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 1.25rem;
+  padding: 8px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+  color: var(--foreground);
+}
+
+.theme-toggle-btn:hover {
+  background-color: var(--light-gray);
+  transform: scale(1.05);
+}
+
+.theme-icon-sun,
+.theme-icon-moon {
+  transition: all var(--transition-fast);
+}
+
+/* Light mode - sun visible, moon hidden */
+body:not(.dark) .theme-icon-moon {
+  display: none;
+}
+body:not(.dark) .theme-icon-sun {
+  display: inline-block;
+}
+
+/* Dark mode - moon visible, sun hidden */
+body.dark .theme-icon-sun {
+  display: none;
+}
+body.dark .theme-icon-moon {
+  display: inline-block;
+}
+
+/* ========================================
+   DARK MODE STYLES
+   ======================================== */
+
+/* Ovo se aktivira kada <html> ima klasu "dark" */
+html.dark {
+  --background: #1A1A1A;
+  --foreground: #FFFFFF;
+  --card: #222222;
+  --card-foreground: #FFFFFF;
+  --secondary: #333333;
+  --secondary-foreground: #CCCCCC;
+  --muted: #2A2A2A;
+  --muted-foreground: #999999;
+  --border: #333333;
+  --input: #333333;
+  --light-gray: #1E1E1E;
+  --dark-gray: #2A2A2A;
+  --medium-gray: #9CA3AF;
+}
+
+/* Dark mode specifični stilovi */
+html.dark .solution-card {
+  background-color: var(--card);
+  border-color: var(--border);
+}
+
+html.dark .solution-card:hover {
+  border-color: var(--primary);
+}
+
+html.dark .product {
+  background-color: var(--secondary);
+}
+
+html.dark .partners {
+  background-color: var(--background);
+}
+
+html.dark .partner-card {
+  background-color: var(--card);
+}
+
+html.dark .section-badge {
+  background-color: var(--secondary);
+}
+
+html.dark .hero {
+  background: linear-gradient(135deg, var(--background) 0%, var(--secondary) 100%);
+}
+
+html.dark .image-placeholder {
+  background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+}
+
+html.dark .btn-secondary {
+  border-color: var(--primary);
+  color: var(--foreground);
+}
+
+html.dark .btn-secondary:hover {
+  background-color: var(--primary);
+  color: white;
+}
+
+html.dark .lang-toggle-container {
+  background-color: var(--secondary);
+}
+
+html.dark .lang-btn {
+  color: var(--muted-foreground);
+}
+
+html.dark .lang-btn:hover:not(.active) {
+  color: var(--foreground);
+}

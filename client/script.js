@@ -25,26 +25,11 @@ function applyTheme(theme, saveToStorage = true) {
   if (saveToStorage) {
     localStorage.setItem('theme', theme);
   }
-  updateThemeButtonIcons(theme);
 }
 
 function toggleTheme() {
   const isDark = document.documentElement.classList.contains('dark');
   applyTheme(isDark ? 'light' : 'dark', true);
-}
-
-function updateThemeButtonIcons(theme) {
-  const themeToggle = document.getElementById('themeToggle');
-  if (!themeToggle) return;
-  const sunIcon = themeToggle.querySelector('.fa-sun');
-  const moonIcon = themeToggle.querySelector('.fa-moon');
-  if (theme === 'dark') {
-    if (sunIcon) sunIcon.style.display = 'none';
-    if (moonIcon) moonIcon.style.display = 'inline-block';
-  } else {
-    if (sunIcon) sunIcon.style.display = 'inline-block';
-    if (moonIcon) moonIcon.style.display = 'none';
-  }
 }
 
 // ========================================
@@ -53,14 +38,11 @@ function updateThemeButtonIcons(theme) {
 
 const translations = {
   sv: {
-    // Navigation
     navHome: "Hem", navFeatures: "Features", navSolution: "Lösningen",
     navLoss: "Varuskydd & AI", navRetail: "Retail Media", navNordic: "Nordisk", navContact: "Kontakt",
     cta: "Boka en Demo", ctaSecondary: "Läs mer",
-    // Hero
     heroTitle: "Smarta Shoppingvagnar för Nordisk Detaljhandel",
     heroSubtitle: "Transformera kundupplevelsen med AI-driven självscanning och personaliserad shopping",
-    // Features
     featuresTitle: "Varför välja Snap Cart?",
     features: [
       { title: "Snabb Självscanning", desc: "Kunderna scannar varor medan de handlar – ingen köbildning vid kassan" },
@@ -68,19 +50,15 @@ const translations = {
       { title: "Personaliserad Shopping", desc: "Rekommendationer och erbjudanden baserade på kundens varukorgs innehåll" },
       { title: "Retail Media Revenue", desc: "Förvandla vagnar till högpresterande marknadsföringskanaler" }
     ],
-    // Solution
     solutionTitle: "Lösningen: Snap Cart",
     solutionDesc: "En modulär smart shoppingvagn som uppgraderar befintliga vagnar med intelligent tablet-teknik",
     solutionFeatures: ["Modulär tablet-integration", "Detaljerad scanner för tunga varor", "Inbyggd AI-kameravision", "Personaliserade recept-förslag", "Lojalitets- och kupongintegration", "Handskrift-scanning av inköpslistor"],
-    // Loss Prevention
     lossTitle: "Varuskydd & AI",
     lossDesc: "Minska svinn med intelligent övervakning och automatiserade spotchecks",
     lossBenefits: ["Realtidsövervakning av varukorg", "Automatisk feldetektering", "Automatiserade spotchecks", "GDPR-kompatibel övervakning", "4x minskning av svinn vs slumpmässiga kontroller"],
-    // Retail Media
     retailTitle: "Generera Intäkter genom Retail Media",
     retailDesc: "Förvandla shoppingvagnar till högpresterande marknadsföringskanaler",
     retailBenefits: ["Reklamplats i gångarna", "Personaliserade erbjudanden", "Realtidsanalytik", "Platsbaserad riktning", "Ökad omsättning per transaktion"],
-    // Testimonials
     testimonialsTitle: "Betrodd av Ledande Detaljhandelskedjor",
     testimonials: [
       { company: "REWE", quote: "Scan & Pay har varit en enorm framgång för oss. Upp till 15% av köpen görs redan med Scan & Pay.", author: "Marco Statt, CIO" },
@@ -89,14 +67,12 @@ const translations = {
     ],
     partnersTitle: "Hårdvarupartner",
     partners: ["Hanshow", "Wanzl", "Geck"],
-    // Nordic
     nordicTitle: "Nordisk Expertis",
     nordicDesc: "Digital Business Partner är exklusiv återförsäljare för Shopreme-lösningar på den nordiska marknaden",
     regionsTitle: "Marknadstäckning",
     regions: ["Sverige", "Norge", "Finland", "Danmark"],
     officesTitle: "Våra Kontor",
     offices: ["Malmö", "Stockholm"],
-    // Contact
     contactTitle: "Kontakta Oss",
     contactDesc: "Boka en demo eller få mer information om Snap Cart",
     phoneLabel: "Telefon", emailLabel: "E-post",
@@ -335,6 +311,31 @@ function handleFormSubmit(e) {
 }
 
 // ========================================
+// IME COMPOSITION HANDLER (för å, ä, ö)
+// ========================================
+
+function setupCompositionHandling(inputElement) {
+  if (!inputElement) return;
+  let isComposing = false;
+  
+  inputElement.addEventListener('compositionstart', () => {
+    isComposing = true;
+  });
+  
+  inputElement.addEventListener('compositionend', () => {
+    setTimeout(() => {
+      isComposing = false;
+    }, 10);
+  });
+  
+  inputElement.addEventListener('keydown', (e) => {
+    if (isComposing && (e.key === 'Enter' || e.key === 'Escape')) {
+      e.stopPropagation();
+    }
+  });
+}
+
+// ========================================
 // DOM CONTENT LOADED
 // ========================================
 
@@ -414,27 +415,13 @@ document.addEventListener('DOMContentLoaded', function() {
   if (contactForm) {
     contactForm.addEventListener('submit', handleFormSubmit);
   }
-  // Jednostavna verzija za sprečavanje Enter tokom unosa švedskih karaktera
-function setupCompositionHandling(inputElement) {
-  let isComposing = false;
   
-  inputElement.addEventListener('compositionstart', () => {
-    isComposing = true;
-  });
+  // Composition handling for form inputs (å, ä, ö)
+  setupCompositionHandling(document.getElementById('formName'));
+  setupCompositionHandling(document.getElementById('formCompany'));
+  setupCompositionHandling(document.getElementById('formEmail'));
+  setupCompositionHandling(document.getElementById('formMessage'));
   
-  inputElement.addEventListener('compositionend', () => {
-    setTimeout(() => {
-      isComposing = false;
-    }, 10);
-  });
-  
-  inputElement.addEventListener('keydown', (e) => {
-    if (isComposing && (e.key === 'Enter' || e.key === 'Escape')) {
-      e.stopPropagation();
-    }
-  });
-}
-
   // Intersection Observer for fade-in animations
   const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -50px 0px' };
   const observer = new IntersectionObserver((entries) => {

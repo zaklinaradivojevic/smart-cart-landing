@@ -16,31 +16,39 @@
 </head>
 <body>
 
-  <!-- ========== HEADER (Sticky Navigation) ========== -->
+    <!-- ========== HEADER (Sticky Navigation) ========== -->
   <header class="site-header">
     <div class="container header-container">
+      <!-- Logo Section -->
       <div class="logo-area">
-        <a href="/" class="logo">
-          <span class="logo-dbp">DBP</span>
-          <span class="logo-nordic">Nordic</span>
-        </a>
+        <img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663286798330/gDzsyrJdw5KTv5QCwqxjMW/dbp-logo-gK593VApMkRw2FZnnzzby4.webp" alt="Digital Business Partner" class="logo-dbp-img">
+        <img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663286798330/gDzsyrJdw5KTv5QCwqxjMW/shopreme-logo-KjXNp3KrsD4ViGnSu6cFu8.webp" alt="Shopreme" class="logo-shopreme-img">
       </div>
       
+      <!-- Desktop Navigation -->
       <nav class="main-nav">
-        <ul class="nav-menu">
-          <li><a href="#" class="nav-link active">Hem</a></li>
-          <li><a href="#" class="nav-link">Om oss</a></li>
-          <li><a href="#" class="nav-link">Vårt erbjudande</a></li>
-          <li><a href="#" class="nav-link">Galleri</a></li>
-          <li><a href="#" class="nav-link">Kontakt</a></li>
+        <ul class="nav-menu" id="navMenu">
+          <li><a href="#home" class="nav-link" data-id="home">Hem</a></li>
+          <li><a href="#solution" class="nav-link" data-id="solution">Lösningen</a></li>
+          <li><a href="#loss-prevention" class="nav-link" data-id="loss-prevention">Varuskydd & AI</a></li>
+          <li><a href="#retail-media" class="nav-link" data-id="retail-media">Retail Media</a></li>
+          <li><a href="#about" class="nav-link" data-id="about">Om oss</a></li>
+          <li><a href="#contact" class="nav-link" data-id="contact">Kontakt</a></li>
         </ul>
       </nav>
       
+      <!-- Right Side: Language Toggle & CTA -->
       <div class="header-actions">
-        <button class="lang-toggle" id="langToggle">
-          <span class="lang-sv">SV</span>
-          <span class="lang-en">EN</span>
-        </button>
+        <!-- Language Toggle -->
+        <div class="lang-toggle-container">
+          <button class="lang-btn" data-lang="sv">SV</button>
+          <button class="lang-btn" data-lang="en">EN</button>
+        </div>
+
+        <!-- Desktop CTA Button -->
+        <button class="btn-primary cta-btn" id="ctaButton">Boka en Demo</button>
+
+        <!-- Mobile Menu Button -->
         <button class="mobile-menu-btn" id="mobileMenuBtn">
           <i class="fas fa-bars"></i>
         </button>
@@ -50,12 +58,14 @@
     <!-- Mobile menu (hidden by default) -->
     <div class="mobile-menu" id="mobileMenu">
       <ul class="mobile-nav-menu">
-        <li><a href="#" class="mobile-nav-link">Hem</a></li>
-        <li><a href="#" class="mobile-nav-link">Om oss</a></li>
-        <li><a href="#" class="mobile-nav-link">Vårt erbjudande</a></li>
-        <li><a href="#" class="mobile-nav-link">Galleri</a></li>
-        <li><a href="#" class="mobile-nav-link">Kontakt</a></li>
+        <li><a href="#home" class="mobile-nav-link" data-id="home">Hem</a></li>
+        <li><a href="#solution" class="mobile-nav-link" data-id="solution">Lösningen</a></li>
+        <li><a href="#loss-prevention" class="mobile-nav-link" data-id="loss-prevention">Varuskydd & AI</a></li>
+        <li><a href="#retail-media" class="mobile-nav-link" data-id="retail-media">Retail Media</a></li>
+        <li><a href="#about" class="mobile-nav-link" data-id="about">Om oss</a></li>
+        <li><a href="#contact" class="mobile-nav-link" data-id="contact">Kontakt</a></li>
       </ul>
+      <button class="btn-primary mobile-cta-btn" id="mobileCtaButton">Boka en Demo</button>
     </div>
   </header>
 

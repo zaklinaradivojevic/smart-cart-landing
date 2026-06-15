@@ -1,19 +1,372 @@
-/**
- * Smart Cart Landing Page - JavaScript
- * Mobile menu, language toggle, scroll animations
- */
+// ========================================
+// DARK/LIGHT MODE THEME TOGGLE
+// ========================================
 
-// Wait for DOM to load
-document.addEventListener('DOMContentLoaded', function() {
+function initTheme() {
+  const stored = localStorage.getItem('theme');
+  let theme = 'light';
+  if (stored === 'dark' || stored === 'light') {
+    theme = stored;
+  } else {
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    theme = prefersDark ? 'dark' : 'light';
+  }
+  applyTheme(theme, true);
+  return theme;
+}
+
+function applyTheme(theme, saveToStorage = true) {
+  const root = document.documentElement;
+  if (theme === 'dark') {
+    root.classList.add('dark');
+  } else {
+    root.classList.remove('dark');
+  }
+  if (saveToStorage) {
+    localStorage.setItem('theme', theme);
+  }
+  updateThemeButtonIcons(theme);
+}
+
+function toggleTheme() {
+  const isDark = document.documentElement.classList.contains('dark');
+  applyTheme(isDark ? 'light' : 'dark', true);
+}
+
+function updateThemeButtonIcons(theme) {
+  const themeToggle = document.getElementById('themeToggle');
+  if (!themeToggle) return;
+  const sunIcon = themeToggle.querySelector('.fa-sun');
+  const moonIcon = themeToggle.querySelector('.fa-moon');
+  if (theme === 'dark') {
+    if (sunIcon) sunIcon.style.display = 'none';
+    if (moonIcon) moonIcon.style.display = 'inline-block';
+  } else {
+    if (sunIcon) sunIcon.style.display = 'inline-block';
+    if (moonIcon) moonIcon.style.display = 'none';
+  }
+}
+
+// ========================================
+// LANGUAGE TRANSLATIONS
+// ========================================
+
+const translations = {
+  sv: {
+    // Navigation
+    navHome: "Hem", navFeatures: "Features", navSolution: "Lösningen",
+    navLoss: "Varuskydd & AI", navRetail: "Retail Media", navNordic: "Nordisk", navContact: "Kontakt",
+    cta: "Boka en Demo", ctaSecondary: "Läs mer",
+    // Hero
+    heroTitle: "Smarta Shoppingvagnar för Nordisk Detaljhandel",
+    heroSubtitle: "Transformera kundupplevelsen med AI-driven självscanning och personaliserad shopping",
+    // Features
+    featuresTitle: "Varför välja Snap Cart?",
+    features: [
+      { title: "Snabb Självscanning", desc: "Kunderna scannar varor medan de handlar – ingen köbildning vid kassan" },
+      { title: "AI-driven Varuskydd", desc: "Intelligent kameravision minskar svinn med upp till 4x jämfört med slumpmässiga kontroller" },
+      { title: "Personaliserad Shopping", desc: "Rekommendationer och erbjudanden baserade på kundens varukorgs innehåll" },
+      { title: "Retail Media Revenue", desc: "Förvandla vagnar till högpresterande marknadsföringskanaler" }
+    ],
+    // Solution
+    solutionTitle: "Lösningen: Snap Cart",
+    solutionDesc: "En modulär smart shoppingvagn som uppgraderar befintliga vagnar med intelligent tablet-teknik",
+    solutionFeatures: ["Modulär tablet-integration", "Detaljerad scanner för tunga varor", "Inbyggd AI-kameravision", "Personaliserade recept-förslag", "Lojalitets- och kupongintegration", "Handskrift-scanning av inköpslistor"],
+    // Loss Prevention
+    lossTitle: "Varuskydd & AI",
+    lossDesc: "Minska svinn med intelligent övervakning och automatiserade spotchecks",
+    lossBenefits: ["Realtidsövervakning av varukorg", "Automatisk feldetektering", "Automatiserade spotchecks", "GDPR-kompatibel övervakning", "4x minskning av svinn vs slumpmässiga kontroller"],
+    // Retail Media
+    retailTitle: "Generera Intäkter genom Retail Media",
+    retailDesc: "Förvandla shoppingvagnar till högpresterande marknadsföringskanaler",
+    retailBenefits: ["Reklamplats i gångarna", "Personaliserade erbjudanden", "Realtidsanalytik", "Platsbaserad riktning", "Ökad omsättning per transaktion"],
+    // Testimonials
+    testimonialsTitle: "Betrodd av Ledande Detaljhandelskedjor",
+    testimonials: [
+      { company: "REWE", quote: "Scan & Pay har varit en enorm framgång för oss. Upp till 15% av köpen görs redan med Scan & Pay.", author: "Marco Statt, CIO" },
+      { company: "Dohle", quote: "Vi är mycket glada över att vi valde Shopreme. De har varit den ideala teknologipartnern.", author: "Oliver Schnurr, Product Owner" },
+      { company: "Bartels-Langness", quote: "Detta är en riktigt bra lösning. Kunderna förväntar sig innovativa lösningar vid kassan.", author: "Florian Behrens, CIO" }
+    ],
+    partnersTitle: "Hårdvarupartner",
+    partners: ["Hanshow", "Wanzl", "Geck"],
+    // Nordic
+    nordicTitle: "Nordisk Expertis",
+    nordicDesc: "Digital Business Partner är exklusiv återförsäljare för Shopreme-lösningar på den nordiska marknaden",
+    regionsTitle: "Marknadstäckning",
+    regions: ["Sverige", "Norge", "Finland", "Danmark"],
+    officesTitle: "Våra Kontor",
+    offices: ["Malmö", "Stockholm"],
+    // Contact
+    contactTitle: "Kontakta Oss",
+    contactDesc: "Boka en demo eller få mer information om Snap Cart",
+    phoneLabel: "Telefon", emailLabel: "E-post",
+    formName: "Namn", formCompany: "Företag", formEmail: "E-post", formMessage: "Meddelande", submitBtn: "Skicka"
+  },
+  en: {
+    navHome: "Home", navFeatures: "Features", navSolution: "Solution",
+    navLoss: "Loss Prevention & AI", navRetail: "Retail Media", navNordic: "Nordic", navContact: "Contact",
+    cta: "Book a Demo", ctaSecondary: "Learn More",
+    heroTitle: "Smart Shopping Carts for Nordic Retail",
+    heroSubtitle: "Transform the customer experience with AI-driven self-scanning and personalized shopping",
+    featuresTitle: "Why Choose Snap Cart?",
+    features: [
+      { title: "Fast Self-Scanning", desc: "Customers scan items while shopping – no queues at checkout" },
+      { title: "AI-Driven Loss Prevention", desc: "Intelligent camera vision reduces shrinkage by up to 4x compared to random checks" },
+      { title: "Personalized Shopping", desc: "Recommendations and offers based on customer basket contents" },
+      { title: "Retail Media Revenue", desc: "Transform carts into high-performing marketing channels" }
+    ],
+    solutionTitle: "The Solution: Snap Cart",
+    solutionDesc: "A modular smart shopping cart that upgrades existing carts with intelligent tablet technology",
+    solutionFeatures: ["Modular tablet integration", "Detachable scanner for heavy items", "Built-in AI camera vision", "Personalized recipe suggestions", "Loyalty and coupon integration", "Handwriting shopping list scanning"],
+    lossTitle: "Loss Prevention & AI",
+    lossDesc: "Reduce shrinkage with intelligent monitoring and automated spot checks",
+    lossBenefits: ["Real-time basket monitoring", "Automatic error detection", "Automated spot checks", "GDPR-compliant monitoring", "4x shrinkage reduction vs random checks"],
+    retailTitle: "Generate Revenue Through Retail Media",
+    retailDesc: "Transform shopping carts into high-performing marketing channels",
+    retailBenefits: ["In-aisle advertising space", "Personalized offers", "Real-time analytics", "Location-based targeting", "Increased revenue per transaction"],
+    testimonialsTitle: "Trusted by Leading Retailers",
+    testimonials: [
+      { company: "REWE", quote: "Scan & Pay has been a huge success for us. Up to 15% of purchases are already made with Scan & Pay.", author: "Marco Statt, CIO" },
+      { company: "Dohle", quote: "We are very glad we chose Shopreme. They have been the ideal technology partner.", author: "Oliver Schnurr, Product Owner" },
+      { company: "Bartels-Langness", quote: "This is a really great solution. Customers expect innovative solutions at the POS.", author: "Florian Behrens, CIO" }
+    ],
+    partnersTitle: "Hardware Partners",
+    partners: ["Hanshow", "Wanzl", "Geck"],
+    nordicTitle: "Nordic Expertise",
+    nordicDesc: "Digital Business Partner is the exclusive reseller of Shopreme solutions in the Nordic market",
+    regionsTitle: "Market Coverage",
+    regions: ["Sweden", "Norway", "Finland", "Denmark"],
+    officesTitle: "Our Offices",
+    offices: ["Malmö", "Stockholm"],
+    contactTitle: "Contact Us",
+    contactDesc: "Book a demo or get more information about Snap Cart",
+    phoneLabel: "Phone", emailLabel: "Email",
+    formName: "Name", formCompany: "Company", formEmail: "Email", formMessage: "Message", submitBtn: "Send"
+  }
+};
+
+let currentLang = 'sv';
+
+function updateLanguage(lang) {
+  currentLang = lang;
+  const t = translations[lang];
   
-  // ========== MOBILE MENU TOGGLE ==========
+  // Update navigation
+  document.querySelectorAll('.nav-link, .mobile-nav-link').forEach(link => {
+    const id = link.getAttribute('data-id');
+    const navMap = {
+      'home': t.navHome, 'features': t.navFeatures, 'solution': t.navSolution,
+      'loss-prevention': t.navLoss, 'retail-media': t.navRetail,
+      'nordic': t.navNordic, 'contact': t.navContact
+    };
+    if (navMap[id]) link.textContent = navMap[id];
+  });
+  
+  // Update CTA buttons
+  document.querySelectorAll('#ctaButton, #mobileCtaButton, #heroCtaBtn').forEach(btn => {
+    if (btn) btn.innerHTML = `${t.cta} <i class="fas fa-arrow-right"></i>`;
+  });
+  const heroSecondary = document.getElementById('heroSecondaryBtn');
+  if (heroSecondary) heroSecondary.textContent = t.ctaSecondary;
+  
+  // Update hero
+  const heroTitle = document.getElementById('heroTitle');
+  const heroSubtitle = document.getElementById('heroSubtitle');
+  if (heroTitle) heroTitle.textContent = t.heroTitle;
+  if (heroSubtitle) heroSubtitle.textContent = t.heroSubtitle;
+  
+  // Update features title
+  const featuresTitle = document.getElementById('featuresTitle');
+  if (featuresTitle) featuresTitle.textContent = t.featuresTitle;
+  
+  // Populate features grid
+  const featuresGrid = document.getElementById('featuresGrid');
+  if (featuresGrid) {
+    featuresGrid.innerHTML = t.features.map(f => `
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-check-circle"></i></div>
+        <h3 class="feature-title">${f.title}</h3>
+        <p class="feature-desc">${f.desc}</p>
+      </div>
+    `).join('');
+  }
+  
+  // Update solution
+  const solutionTitle = document.getElementById('solutionTitle');
+  const solutionDesc = document.getElementById('solutionDesc');
+  if (solutionTitle) solutionTitle.textContent = t.solutionTitle;
+  if (solutionDesc) solutionDesc.textContent = t.solutionDesc;
+  
+  const solutionFeatures = document.getElementById('solutionFeatures');
+  if (solutionFeatures) {
+    solutionFeatures.innerHTML = t.solutionFeatures.map(f => `<li><i class="fas fa-check-circle"></i> ${f}</li>`).join('');
+  }
+  
+  // Update loss prevention
+  const lossTitle = document.getElementById('lossTitle');
+  const lossDesc = document.getElementById('lossDesc');
+  if (lossTitle) lossTitle.textContent = t.lossTitle;
+  if (lossDesc) lossDesc.textContent = t.lossDesc;
+  
+  const lossBenefits = document.getElementById('lossBenefits');
+  if (lossBenefits) {
+    lossBenefits.innerHTML = t.lossBenefits.map(b => `<li><i class="fas fa-shield-alt"></i> ${b}</li>`).join('');
+  }
+  
+  // Update retail media
+  const retailTitle = document.getElementById('retailTitle');
+  const retailDesc = document.getElementById('retailDesc');
+  if (retailTitle) retailTitle.textContent = t.retailTitle;
+  if (retailDesc) retailDesc.textContent = t.retailDesc;
+  
+  const retailBenefits = document.getElementById('retailBenefits');
+  if (retailBenefits) {
+    retailBenefits.innerHTML = t.retailBenefits.map(b => `<li><i class="fas fa-chart-line"></i> ${b}</li>`).join('');
+  }
+  
+  // Update testimonials
+  const testimonialsTitle = document.getElementById('testimonialsTitle');
+  if (testimonialsTitle) testimonialsTitle.textContent = t.testimonialsTitle;
+  
+  const testimonialsGrid = document.getElementById('testimonialsGrid');
+  if (testimonialsGrid) {
+    testimonialsGrid.innerHTML = t.testimonials.map(ts => `
+      <div class="testimonial-card">
+        <div class="testimonial-company">${ts.company}</div>
+        <div class="testimonial-quote">"${ts.quote}"</div>
+        <div class="testimonial-author">— ${ts.author}</div>
+      </div>
+    `).join('');
+  }
+  
+  // Update partners
+  const partnersTitle = document.getElementById('partnersTitle');
+  if (partnersTitle) partnersTitle.textContent = t.partnersTitle;
+  
+  const partnersLogos = document.getElementById('partnersLogos');
+  if (partnersLogos) {
+    partnersLogos.innerHTML = t.partners.map(p => `<div class="partner-logo-card">${p}</div>`).join('');
+  }
+  
+  // Update nordic
+  const nordicTitle = document.getElementById('nordicTitle');
+  const nordicDescElem = document.getElementById('nordicDesc');
+  if (nordicTitle) nordicTitle.textContent = t.nordicTitle;
+  if (nordicDescElem) nordicDescElem.textContent = t.nordicDesc;
+  
+  const regionsTitleElem = document.getElementById('regionsTitle');
+  if (regionsTitleElem) regionsTitleElem.textContent = t.regionsTitle;
+  
+  const regionsGrid = document.getElementById('regionsGrid');
+  if (regionsGrid) {
+    regionsGrid.innerHTML = t.regions.map(r => `<div class="region-card">${r}</div>`).join('');
+  }
+  
+  const officesTitleElem = document.getElementById('officesTitle');
+  if (officesTitleElem) officesTitleElem.textContent = t.officesTitle;
+  
+  const officesGrid = document.getElementById('officesGrid');
+  if (officesGrid) {
+    officesGrid.innerHTML = t.offices.map(o => `<div class="office-card"><i class="fas fa-building"></i><br>${o}</div>`).join('');
+  }
+  
+  // Update contact
+  const contactTitle = document.getElementById('contactTitle');
+  const contactDescElem = document.getElementById('contactDesc');
+  const phoneLabel = document.getElementById('phoneLabel');
+  const emailLabel = document.getElementById('emailLabel');
+  const formName = document.getElementById('formName');
+  const formCompany = document.getElementById('formCompany');
+  const formEmail = document.getElementById('formEmail');
+  const formMessage = document.getElementById('formMessage');
+  const submitBtn = document.getElementById('submitBtn');
+  
+  if (contactTitle) contactTitle.textContent = t.contactTitle;
+  if (contactDescElem) contactDescElem.textContent = t.contactDesc;
+  if (phoneLabel) phoneLabel.textContent = t.phoneLabel;
+  if (emailLabel) emailLabel.textContent = t.emailLabel;
+  if (formName) formName.placeholder = t.formName;
+  if (formCompany) formCompany.placeholder = t.formCompany;
+  if (formEmail) formEmail.placeholder = t.formEmail;
+  if (formMessage) formMessage.placeholder = t.formMessage;
+  if (submitBtn) submitBtn.textContent = t.submitBtn;
+  
+  // Update language toggle buttons
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    const btnLang = btn.getAttribute('data-lang');
+    if (btnLang === lang) {
+      btn.classList.add('active');
+    } else {
+      btn.classList.remove('active');
+    }
+  });
+}
+
+// ========================================
+// SMOOTH SCROLL
+// ========================================
+
+function handleNavClick(id) {
+  const element = document.getElementById(id);
+  if (element) {
+    element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+
+function handleBookDemo() {
+  handleNavClick('contact');
+}
+
+// ========================================
+// FORM SUBMISSION
+// ========================================
+
+function handleFormSubmit(e) {
+  e.preventDefault();
+  const formData = {
+    name: document.getElementById('formName')?.value || '',
+    company: document.getElementById('formCompany')?.value || '',
+    email: document.getElementById('formEmail')?.value || '',
+    message: document.getElementById('formMessage')?.value || ''
+  };
+  console.log('Form submitted:', formData);
+  alert(currentLang === 'sv' ? 'Tack! Vi återkommer inom kort.' : 'Thank you! We will get back to you shortly.');
+  e.target.reset();
+}
+
+// ========================================
+// DOM CONTENT LOADED
+// ========================================
+
+document.addEventListener('DOMContentLoaded', function() {
+  // Initialize theme
+  initTheme();
+  
+  // Theme toggle
+  const themeToggleBtn = document.getElementById('themeToggle');
+  if (themeToggleBtn) {
+    themeToggleBtn.addEventListener('click', toggleTheme);
+  }
+  
+  // Language toggle
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const lang = this.getAttribute('data-lang');
+      if (lang === 'sv' || lang === 'en') {
+        updateLanguage(lang);
+      }
+    });
+  });
+  
+  // Initialize language (SV)
+  updateLanguage('sv');
+  
+  // Mobile menu toggle
   const mobileMenuBtn = document.getElementById('mobileMenuBtn');
   const mobileMenu = document.getElementById('mobileMenu');
-  
   if (mobileMenuBtn && mobileMenu) {
     mobileMenuBtn.addEventListener('click', function() {
       mobileMenu.classList.toggle('active');
-      // Change icon based on menu state
       const icon = mobileMenuBtn.querySelector('i');
       if (mobileMenu.classList.contains('active')) {
         icon.classList.remove('fa-bars');
@@ -25,134 +378,46 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
   
-  // Close mobile menu when clicking on a link
-  const mobileLinks = document.querySelectorAll('.mobile-nav-link');
-  mobileLinks.forEach(link => {
-    link.addEventListener('click', function() {
-      mobileMenu.classList.remove('active');
-      const icon = mobileMenuBtn.querySelector('i');
-      icon.classList.remove('fa-times');
-      icon.classList.add('fa-bars');
+  // Navigation links
+  document.querySelectorAll('.nav-link, .mobile-nav-link').forEach(link => {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      const id = this.getAttribute('data-id');
+      if (id) {
+        handleNavClick(id);
+        // Close mobile menu
+        if (mobileMenu && mobileMenu.classList.contains('active')) {
+          mobileMenu.classList.remove('active');
+          const icon = mobileMenuBtn?.querySelector('i');
+          if (icon) {
+            icon.classList.remove('fa-times');
+            icon.classList.add('fa-bars');
+          }
+        }
+      }
     });
   });
   
-  // ========== LANGUAGE TOGGLE (SV/EN) ==========
-  const langToggle = document.getElementById('langToggle');
-  let currentLang = 'sv'; // default Swedish
+  // CTA buttons
+  document.querySelectorAll('#ctaButton, #mobileCtaButton, #heroCtaBtn').forEach(btn => {
+    btn.addEventListener('click', handleBookDemo);
+  });
   
-  // Content translations
-  const translations = {
-    sv: {
-      heroTitle: 'Smart Cart –<br><span class="hero-title-accent">pametna korpa</span><br>za pametnije odluke',
-      heroSubtitle: 'Digital Business Partner donosi Shopreme tehnologiju na nordijsko tržište.<br>Revolucionirajte iskustvo kupovine u vašim supermarketima.',
-      btnContact: 'Kontaktirajte nas',
-      btnDemo: 'Se demo',
-      sectionBadge: 'Vår expertis',
-      sectionTitle: 'Digitala lösningar för<br>moderna butiker',
-      sectionSubtitle: 'Tillsammans med våra kunder skapar vi framtidens shoppingupplevelse',
-      productTitle: 'Vad är <span class="lilac-text">Smart Cart?</span>',
-      productDesc: 'Smart Cart är en intelligent shoppingvagn som ger kunderna en sömlös och effektiv shoppingupplevelse. Med inbyggda sensorer, vågar och en interaktiv skärm kan kunderna skanna varor direkt i vagnen, se reapriser och betala utan att passera kassan.',
-      ctaTitle: 'Redo att revolutionera<br>era butiker?',
-      ctaText: 'Kontakta oss idag för en kostnadsfri konsultation.'
-    },
-    en: {
-      heroTitle: 'Smart Cart –<br><span class="hero-title-accent">smart shopping cart</span><br>for smarter decisions',
-      heroSubtitle: 'Digital Business Partner brings Shopreme technology to the Nordic market.<br>Revolutionize the shopping experience in your supermarkets.',
-      btnContact: 'Contact us',
-      btnDemo: 'See demo',
-      sectionBadge: 'Our expertise',
-      sectionTitle: 'Digital solutions for<br>modern stores',
-      sectionSubtitle: 'Together with our customers, we create the future of shopping experiences',
-      productTitle: 'What is <span class="lilac-text">Smart Cart?</span>',
-      productDesc: 'Smart Cart is an intelligent shopping cart that provides customers with a seamless and efficient shopping experience. With built-in sensors, scales, and an interactive screen, customers can scan items directly in the cart, see sale prices, and pay without going through the checkout.',
-      ctaTitle: 'Ready to revolutionize<br>your stores?',
-      ctaText: 'Contact us today for a free consultation.'
-    }
-  };
-  
-  if (langToggle) {
-    langToggle.addEventListener('click', function() {
-      // Toggle language
-      currentLang = currentLang === 'sv' ? 'en' : 'sv';
-      
-      // Update toggle button text
-      const svSpan = langToggle.querySelector('.lang-sv');
-      const enSpan = langToggle.querySelector('.lang-en');
-      if (svSpan && enSpan) {
-        if (currentLang === 'sv') {
-          svSpan.style.opacity = '1';
-          enSpan.style.opacity = '0.5';
-        } else {
-          svSpan.style.opacity = '0.5';
-          enSpan.style.opacity = '1';
-        }
-      }
-      
-      // Update hero section
-      const heroTitle = document.querySelector('.hero-title');
-      const heroSubtitle = document.querySelector('.hero-subtitle');
-      const contactBtn = document.querySelector('.hero-buttons .btn-primary');
-      const demoBtn = document.querySelector('.hero-buttons .btn-secondary');
-      
-      if (heroTitle) heroTitle.innerHTML = translations[currentLang].heroTitle;
-      if (heroSubtitle) heroSubtitle.innerHTML = translations[currentLang].heroSubtitle;
-      if (contactBtn && contactBtn.innerHTML.includes('Kontaktirajte')) {
-        contactBtn.innerHTML = `<i class="fas fa-arrow-right"></i> ${translations[currentLang].btnContact}`;
-      }
-      if (demoBtn && demoBtn.innerHTML.includes('Se demo')) {
-        demoBtn.innerHTML = `<i class="fas fa-play"></i> ${translations[currentLang].btnDemo}`;
-      }
-      
-      // Update solutions section
-      const sectionBadge = document.querySelector('.section-badge');
-      const sectionTitle = document.querySelector('.section-title');
-      const sectionSubtitle = document.querySelector('.section-subtitle');
-      
-      if (sectionBadge && sectionBadge.innerText === 'Vår expertis' || sectionBadge.innerText === 'Our expertise') {
-        sectionBadge.innerText = translations[currentLang].sectionBadge;
-      }
-      if (sectionTitle && sectionTitle.innerHTML.includes('Digitala lösningar')) {
-        sectionTitle.innerHTML = translations[currentLang].sectionTitle;
-      }
-      if (sectionSubtitle && sectionSubtitle.innerText.includes('Tillsammans med våra kunder')) {
-        sectionSubtitle.innerText = translations[currentLang].sectionSubtitle;
-      }
-      
-      // Update product section
-      const productTitle = document.querySelector('.product-title');
-      const productDesc = document.querySelector('.product-description');
-      
-      if (productTitle && productTitle.innerHTML.includes('Vad är')) {
-        productTitle.innerHTML = translations[currentLang].productTitle;
-      }
-      if (productDesc && productDesc.innerText.includes('Smart Cart är en intelligent')) {
-        productDesc.innerText = translations[currentLang].productDesc;
-      }
-      
-      // Update CTA section
-      const ctaTitle = document.querySelector('.cta-title');
-      const ctaText = document.querySelector('.cta-text');
-      const ctaBtn = document.querySelector('.cta-section .btn-primary');
-      
-      if (ctaTitle && ctaTitle.innerHTML.includes('Redo att')) {
-        ctaTitle.innerHTML = translations[currentLang].ctaTitle;
-      }
-      if (ctaText && ctaText.innerText.includes('Kontakta oss idag')) {
-        ctaText.innerText = translations[currentLang].ctaText;
-      }
-      if (ctaBtn && ctaBtn.innerHTML.includes('Kontakta oss')) {
-        ctaBtn.innerHTML = `${translations[currentLang].btnContact} <i class="fas fa-arrow-right"></i>`;
-      }
-    });
+  // Secondary button (learn more)
+  const heroSecondary = document.getElementById('heroSecondaryBtn');
+  if (heroSecondary) {
+    heroSecondary.addEventListener('click', () => handleNavClick('features'));
   }
   
-  // ========== SCROLL ANIMATIONS (fade-in) ==========
-  const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '0px 0px -50px 0px'
-  };
+  // Form submission
+  const contactForm = document.getElementById('contactForm');
+  if (contactForm) {
+    contactForm.addEventListener('submit', handleFormSubmit);
+  }
   
-  const observer = new IntersectionObserver(function(entries) {
+  // Intersection Observer for fade-in animations
+  const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -50px 0px' };
+  const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
         entry.target.classList.add('fade-in');
@@ -161,173 +426,9 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }, observerOptions);
   
-  // Observe all sections for fade-in animation
-  const sectionsToAnimate = document.querySelectorAll('.solution-card, .product-container, .partners-grid, .cta-section');
-  sectionsToAnimate.forEach(section => {
+  document.querySelectorAll('.feature-card, .solution-container, .loss-container, .retail-container, .testimonial-card, .nordic-content, .contact-container').forEach(section => {
     observer.observe(section);
   });
   
-  // ========== SMOOTH SCROLL FOR NAVIGATION LINKS ==========
-  const allLinks = document.querySelectorAll('a[href^="#"]');
-  allLinks.forEach(link => {
-    link.addEventListener('click', function(e) {
-      const targetId = this.getAttribute('href');
-      if (targetId && targetId !== '#') {
-        const targetElement = document.querySelector(targetId);
-        if (targetElement) {
-          e.preventDefault();
-          targetElement.scrollIntoView({
-            behavior: 'smooth',
-            block: 'start'
-          });
-        }
-      }
-    });
-  });
-  
-  // ========== ACTIVE NAVIGATION LINK ON SCROLL ==========
-  const sections = document.querySelectorAll('section');
-  const navLinks = document.querySelectorAll('.nav-link');
-  
-  function updateActiveLink() {
-    let current = '';
-    const scrollPosition = window.scrollY + 100;
-    
-    sections.forEach(section => {
-      const sectionTop = section.offsetTop;
-      const sectionHeight = section.clientHeight;
-      if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
-        current = section.getAttribute('id');
-      }
-    });
-    
-    navLinks.forEach(link => {
-      link.classList.remove('active');
-      const href = link.getAttribute('href');
-      if (href && href.substring(1) === current) {
-        link.classList.add('active');
-      }
-    });
-  }
-  
-  window.addEventListener('scroll', updateActiveLink);
-  // ========================================
-// DARK/LIGHT MODE THEME TOGGLE
-// (React ThemeProvider ekvivalent u čistom JS)
-// ========================================
-
-// Funkcija koja inicijalizuje temu
-function initTheme() {
-  const switchable = true; // Da li korisnik može da menja temu
-  
-  // Proveri da li je tema sačuvana u localStorage
-  let theme = 'light';
-  
-  if (switchable) {
-    const stored = localStorage.getItem('theme');
-    if (stored === 'dark' || stored === 'light') {
-      theme = stored;
-    } else {
-      // Proveri sistemske preferencije (ako korisnik nema sačuvanu temu)
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      theme = prefersDark ? 'dark' : 'light';
-    }
-  }
-  
-  // Primeni temu na <html> element
-  applyTheme(theme, switchable);
-  
-  // Sačuvaj u localStorage ako je switchable
-  if (switchable) {
-    localStorage.setItem('theme', theme);
-  }
-  
-  return theme;
-}
-
-// Funkcija koja primenjuje temu na stranicu
-function applyTheme(theme, saveToStorage = true) {
-  const root = document.documentElement;
-  
-  if (theme === 'dark') {
-    root.classList.add('dark');
-  } else {
-    root.classList.remove('dark');
-  }
-  
-  if (saveToStorage) {
-    localStorage.setItem('theme', theme);
-  }
-  
-  // Ažuriraj dugme ako postoji (sakrij/neprikazuj ikonice)
-  updateThemeButtonIcons(theme);
-}
-
-// Funkcija koja menja temu (toggle)
-function toggleTheme() {
-  const root = document.documentElement;
-  const isDark = root.classList.contains('dark');
-  const newTheme = isDark ? 'light' : 'dark';
-  
-  applyTheme(newTheme, true);
-  
-  // Opciono: emituj custom event ako drugi delovi koda treba da znaju
-  window.dispatchEvent(new CustomEvent('themeChanged', { detail: { theme: newTheme } }));
-}
-
-// Ažurira ikonice na dugmetu
-function updateThemeButtonIcons(theme) {
-  const themeToggle = document.getElementById('themeToggle');
-  if (!themeToggle) return;
-  
-  const sunIcon = themeToggle.querySelector('.fa-sun');
-  const moonIcon = themeToggle.querySelector('.fa-moon');
-  
-  if (theme === 'dark') {
-    if (sunIcon) sunIcon.style.display = 'none';
-    if (moonIcon) moonIcon.style.display = 'inline-block';
-  } else {
-    if (sunIcon) sunIcon.style.display = 'inline-block';
-    if (moonIcon) moonIcon.style.display = 'none';
-  }
-}
-
-// Inicijalizuj temu i dodaj event listener na dugme
-document.addEventListener('DOMContentLoaded', function() {
-  // Inicijalizuj temu
-  initTheme();
-  
-  // Dodaj event listener na dugme
-  const themeToggleBtn = document.getElementById('themeToggle');
-  if (themeToggleBtn) {
-    themeToggleBtn.addEventListener('click', toggleTheme);
-  }
-  
-  // Opciono: prati sistemske promene teme (ako korisnik nema sačuvanu)
-  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
-    // Samo ako nema sačuvane preferencije
-    if (!localStorage.getItem('theme')) {
-      const newTheme = e.matches ? 'dark' : 'light';
-      applyTheme(newTheme, false);
-    }
-  });
-});
-
-  // ========== BUTTON CLICK HANDLERS (demo) ==========
-  const demoButtons = document.querySelectorAll('.btn-primary, .btn-secondary');
-  demoButtons.forEach(btn => {
-    btn.addEventListener('click', function(e) {
-      // For demo purposes - just log
-      if (this.innerText.includes('Kontakt') || this.innerText.includes('Contact')) {
-        console.log('Contact button clicked - Would open contact form');
-        alert('Demo: Kontaktformulär skulle öppnas här.');
-      }
-      if (this.innerText.includes('demo') || this.innerText.includes('Demo')) {
-        console.log('Demo button clicked - Would show demo video');
-        alert('Demo: Videodemonstration skulle visas här.');
-      }
-    });
-  });
-  
-  console.log('Smart Cart landing page loaded successfully!');
+  console.log('Snap Cart landing page loaded successfully!');
 });

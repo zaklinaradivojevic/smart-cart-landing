@@ -414,7 +414,27 @@ document.addEventListener('DOMContentLoaded', function() {
   if (contactForm) {
     contactForm.addEventListener('submit', handleFormSubmit);
   }
+  // Jednostavna verzija za sprečavanje Enter tokom unosa švedskih karaktera
+function setupCompositionHandling(inputElement) {
+  let isComposing = false;
   
+  inputElement.addEventListener('compositionstart', () => {
+    isComposing = true;
+  });
+  
+  inputElement.addEventListener('compositionend', () => {
+    setTimeout(() => {
+      isComposing = false;
+    }, 10);
+  });
+  
+  inputElement.addEventListener('keydown', (e) => {
+    if (isComposing && (e.key === 'Enter' || e.key === 'Escape')) {
+      e.stopPropagation();
+    }
+  });
+}
+
   // Intersection Observer for fade-in animations
   const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -50px 0px' };
   const observer = new IntersectionObserver((entries) => {

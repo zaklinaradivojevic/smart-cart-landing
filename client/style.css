@@ -365,13 +365,17 @@ h1, h2, h3, h4, h5, h6 {
    SNAP CART SEKCJE
    ======================================== */
 
-/* Hero Section */
+/* ========================================
+   HERO SECTION 
+   ======================================== */
+
 .hero {
   position: relative;
-  padding: 5rem 0;
+  padding: 2rem 0 5rem;
   text-align: center;
   background: linear-gradient(135deg, var(--background) 0%, var(--secondary) 100%);
   overflow: hidden;
+  min-height: auto;
 }
 
 .hero-bg-overlay {
@@ -390,6 +394,8 @@ h1, h2, h3, h4, h5, h6 {
 .hero-container {
   position: relative;
   z-index: 10;
+  margin-top: 0;
+  padding-top: 0;
 }
 
 .hero-badge {
@@ -400,13 +406,14 @@ h1, h2, h3, h4, h5, h6 {
   border-radius: 50px;
   font-size: 0.75rem;
   font-weight: 600;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .hero-title {
   font-size: 2.5rem;
   font-weight: 800;
   margin-bottom: 1rem;
+  margin-top: 0;
 }
 
 @media (min-width: 768px) {
@@ -428,6 +435,7 @@ h1, h2, h3, h4, h5, h6 {
   gap: 1rem;
   flex-wrap: wrap;
 }
+
 
 /* Features Section */
 .features {
